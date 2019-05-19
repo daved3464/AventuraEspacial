@@ -8,7 +8,7 @@ class Coleccionables {
     }
 
     dibujarObjeto() {
-        image(this.imagen, this.posX /*+ 1200*/, this.posY);
+        image(this.imagen, this.posX, this.posY);
     }
 
     moverObjeto() {

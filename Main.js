@@ -8,7 +8,7 @@ let escenario, escenario2;
 //PARA EL MOVIMIENTO DEL ESCENARIO
 let xE, xE2, yE, vel;
 //PARA LAS VIDAS
-let vidas, cont;
+let vidas, cont, perderV;
 //PARA EL PUNTAJE
 let puntos, contp;
 //PARA EL TIEMPO
@@ -23,8 +23,6 @@ let yc;
 //PARA LOS COLECCIONABLES
 let arregloO, tipoO;
 let estrella, estrella2, escudo, vida;
-/*let carril2;
-let yc2;*/
 
 function setup() {
     //TAMAÑO DEL LIENZO
@@ -40,6 +38,7 @@ function setup() {
     cont = 3;
     contt = 0;
     contp = 0;
+    perderV = true;
     //INICIALIZACIÓN VARIABLES PERSONAJE
     personaje = new Personaje(100, 450);
     //INICIALIZACIÓN VARIABLES ENEMIGO
@@ -85,7 +84,7 @@ function setup() {
         case 0:
             objeto = new Coleccionables(estrella, "estrella", 1000, 500);
             break;
-        /*case 1:
+        case 1:
             objeto = new Coleccionables(estrella2, "estrella2", 1100, 500);
             break;
         case 2:
@@ -93,23 +92,9 @@ function setup() {
             break;
         case 3:
             objeto = new Coleccionables(vida, "vida", 200, 500);
-    break;*/}
+            break;
+    }
     arregloO.push(objeto);
-
-    /*  carril2 = Math.floor(random(0, 3));
-      switch (carril2) {
-          case 0:
-              yc2 = 50;
-              break;
-          case 1:
-              yc2 = 250;
-              break;
-          case 2:
-              yc2 = 450;
-              break;
-          default:
-              break;
-      }*/
 }
 
 function preload() {
@@ -176,9 +161,28 @@ function draw() {
                 if (arregloE[i].posX < -1400) {
                     arregloE.splice(i, 1);
                 }
+
+                //CASOS PARA LAS FUNCIONES DE CADA ENEMIGO
+                if (dist(personaje.posX, personaje.posY, e.posX, e.posY) < 150 && perderV) {
+                    if (e.name == "meteorito" || "meteorito2" || "meteorito3") {
+                        contp -= 10;
+                        cont -= 1;
+                        perderV = false;
+                    }
+
+                    if (e.name == "ovni") {
+                        contp -= 100;
+                        cont -= 1;
+                        perderV = false;
+                    }
+                }
             }
 
-            if (frameCount % 35 == 0) {
+            if (frameCount % 240 == 0 && !perderV) {
+                perderV = true;
+            }
+
+            if (frameCount % 55 == 0) {
                 let crearEnemigo = Math.floor(random(1, 10)) % 2 == 0;
 
                 if (crearEnemigo) {
@@ -196,7 +200,6 @@ function draw() {
                         default:
                             break;
                     }
-
 
                     let tipo = Math.floor(random(0, 4));
 
@@ -237,8 +240,12 @@ function draw() {
                 let o = arregloO[i];
                 o.dibujarObjeto();
                 o.moverObjeto();
+                if (arregloO[i].posX < -500) {
+                    arregloO.splice(i, 1);
+                }
 
-                if (dist(personaje.posX + 200, personaje.posY, o.posX, o.posY) < 2000) {
+                //CASOS PARA LAS FUNCIONES DE CADA OBJETO
+                if (dist(personaje.posX, personaje.posY, o.posX, o.posY) < 300) {
                     if (o.name == "estrella") {
                         contp += 25;
                     }
@@ -253,9 +260,6 @@ function draw() {
                     arregloO.splice(i, 1);
                 }
 
-                if (arregloO[i].posX < -1800) {
-                    arregloO.splice(i, 1);
-                }
             }
 
             if (frameCount % 60 == 0) {
@@ -263,46 +267,40 @@ function draw() {
 
                 if (crearObjeto) {
 
-                    let tipoO = Math.floor(random(0, 2));
-                    if (tipoO == 0) {
-                        let o1 = new Coleccionables(estrella, "estrella", 1200, yc);
-                        arregloO.push(o1);
-                        o1.dibujarObjeto();
-                        o1.moverObjeto();
-                        console.log(o1.posX);
-                        console.log("y", o1.posY);
+                    let tipoO = Math.floor(random(0, 4));
 
+                    switch (tipoO) {
+                        case 0:
+                            let o1 = new Coleccionables(estrella, "estrella", 1200, yc);
+                            arregloO.push(o1);
+                            o1.dibujarObjeto();
+                            o1.moverObjeto();
+                            break;
+                        case 1:
+                            let o2 = new Coleccionables(estrella2, "estrella2", 1200, yc);
+                            arregloO.push(o2);
+                            o2.dibujarObjeto();
+                            o2.moverObjeto();
+                            break;
+                        case 2:
+                            if (frameCount % 100 == 0) {
+                                let o3 = new Coleccionables(escudo, "escudo", 1200, yc);
+                                arregloO.push(o3);
+                                o3.dibujarObjeto();
+                                o3.moverObjeto();
+                            }
+                            break;
+                        case 3:
+                            if (cont < 3) {
+                                let o4 = new Coleccionables(vida, "vida", 1200, yc);
+                                arregloO.push(o4);
+                                o4.dibujarObjeto();
+                                o4.moverObjeto();
+                            }
+                            break;
+                        default:
+                            break;
                     }
-                    /*  switch (tipoO) {
-                          case 0:
-                              let o1 = new Coleccionables(estrella, "estrella", 1200, yc);
-                              arregloO.push(o1);
-                              o1.dibujarObjeto();
-                              o1.moverObjeto();
-                              break;
-                          case 1:
-                              let o2 = new Coleccionables(estrella2, "estrella2", 1200, yc);
-                              arregloO.push(o2);
-                              o2.dibujarObjeto();
-                              o2.moverObjeto();
-                              break;
-                              case 2:
-                                  let o3 = new Coleccionables(escudo, "escudo", 1200, yc2);
-                                  arregloO.push(o3);
-                                  o3.dibujarObjeto();
-                                  o3.moverObjeto();
-                                  break;
-                              case 3:
-                                  let o4 = new Coleccionables(vida, "vida", 1200, yc2);
-                                  arregloO.push(o4);
-                                  o4.dibujarObjeto();
-                                  o4.moverObjeto();
-                                  break;
-                          default:
-              break;
-                  }*/
-
-
                 }
             }
 
@@ -337,6 +335,7 @@ function draw() {
             break;
     }
 }
+
 
 //MOVIMIENTO PERSONAJE 12 casillas  x100  x250 x450
 function keyPressed() {
