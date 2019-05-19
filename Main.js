@@ -25,26 +25,7 @@ let arregloO, tipoO;
 let estrella, estrella2, escudo, vida;
 
 function setup() {
-    //TAMAÑO DEL LIENZO
-    createCanvas(1200, 700);
-    //INICIALIZACIÓN VARIABLES PANTALLAS
-    screen = 1;
-    //INICIALIZACIÓN VARIABLES ESCENARIO
-    xE = 0;
-    yE = 0;
-    xE2 = 2218;
-    vel = 10;
-    //INICIALIZACIÓN VARIABLES ESCENARIO
-    cont = 3;
-    contt = 0;
-    contp = 0;
-    perderV = true;
-    //INICIALIZACIÓN VARIABLES PERSONAJE
-    personaje = new Personaje(100, 450);
-    //INICIALIZACIÓN VARIABLES ENEMIGO
-    arregloE = [];
-    tipoE = Math.floor(random(0, 4));
-    let enemigo;
+    InitializeEnv();
     switch (tipoE) {
         case 0:
             enemigo = new Enemigo(meteorito, "meteorito", 500, 500);
@@ -152,8 +133,8 @@ function draw() {
             personaje.dibujarCohete();
 
             //APARICIÓN DE LOS ENEMIGOS
-            for (let i = 0; i < arregloE.length; i++) {
-
+            for (let i = 0; i < arregloE.length; i++) 
+            {
                 let e = arregloE[i];
                 e.dibujarEnemigo();
                 e.moverEnemigo();
@@ -163,19 +144,41 @@ function draw() {
                 }
 
                 //CASOS PARA LAS FUNCIONES DE CADA ENEMIGO
-                if (dist(personaje.posX, personaje.posY, e.posX, e.posY) < 150 && perderV) {
-                    if (e.name == "meteorito" || "meteorito2" || "meteorito3") {
-                        contp -= 10;
+                if (dist(personaje.posX, personaje.posY, e.posX, e.posY) < 150 && perderV && cont != 0) {
+                    perderV = false;
+                    if (e.name == "meteorito" || "meteorito2" || "meteorito3") {          
+                        if((contp - 10) < 0 ){
+                            contp = 0;
+                        }
+                        else{
+                            contp -=10;
+                        }              
                         cont -= 1;
                         perderV = false;
+
+                        
                     }
 
-                    if (e.name == "ovni") {
-                        contp -= 100;
-                        cont -= 1;
+                    if (e.name == "ovni" ) {    
+                        if((contp - 100) < 0 ){
+                            contp = 0;
+                        }
+                        else{
+                            contp -=100;
+                        }                    
+                        cont -= 2;
                         perderV = false;
+                        
+                        
                     }
                 }
+                
+
+            }
+
+            if (cont == 0){
+                InitializeEnv();
+                redraw();
             }
 
             if (frameCount % 240 == 0 && !perderV) {
@@ -245,7 +248,7 @@ function draw() {
                 }
 
                 //CASOS PARA LAS FUNCIONES DE CADA OBJETO
-                if (dist(personaje.posX, personaje.posY, o.posX, o.posY) < 300) {
+                if (dist(personaje.posX, personaje.posY, o.posX, o.posY) < 150) {
                     if (o.name == "estrella") {
                         contp += 25;
                     }
@@ -374,4 +377,27 @@ function mousePressed() {
     if (screen == 3 && mouseX > 0 && mouseX < 50 && mouseY > 0 && mouseY < 50) {
         screen = 4;
     }
+}
+
+function InitializeEnv(){
+    //TAMAÑO DEL LIENZO
+    createCanvas(1200, 700);
+    //INICIALIZACIÓN VARIABLES PANTALLAS
+    screen = 1;
+    //INICIALIZACIÓN VARIABLES ESCENARIO
+    xE = 0;
+    yE = 0;
+    xE2 = 2218;
+    vel = 10;
+    //INICIALIZACIÓN VARIABLES ESCENARIO
+    cont = 3;
+    contt = 0;
+    contp = 0;
+    perderV = true;
+    //INICIALIZACIÓN VARIABLES PERSONAJE
+    personaje = new Personaje(100, 450);
+    //INICIALIZACIÓN VARIABLES ENEMIGO
+    arregloE = [];
+    tipoE = Math.floor(random(0, 4));
+    let enemigo;
 }
